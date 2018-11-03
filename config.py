@@ -21,7 +21,7 @@ class Config(object):
     SESSION_USE_SIGNER = True
     SESSION_REDIS =  redis.StrictRedis(host=REDIS_HOST,port=REDIS_PORT)
     # 设置session的有效期 ,单位秒,有效期可以随意设置
-    SESSION_PERMANENT = 86400 * 2
+    SESSION_PERMANENT = 86400 * 3
 
 # 开发阶段需要把debug调试模式开启
 class DevelopementConfig(Config):

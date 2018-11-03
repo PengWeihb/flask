@@ -1,6 +1,8 @@
 from flask_migrate import Migrate,MigrateCommand
 from flask_script import Manager
 from info import create_app,db
+from info import models
+
 """
 入口程序
 ctrl + alt + o :优化导包,去掉没用的包
