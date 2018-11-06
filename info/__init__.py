@@ -12,6 +12,8 @@ import redis
 from flask_wtf import CSRFProtect
 
 from flask_session import Session
+# 生成一个CSRF_token
+from flask_wtf.csrf import generate_csrf
 
 
 # 设置日志的记录等级
@@ -27,6 +29,9 @@ logging.getLogger().addHandler(file_log_handler)
 
 # 创建数据库对象,一定要注意上面加载配置文件和数据库的代码顺序不能混淆
 db = SQLAlchemy()
+# 创建一个默认值叫做redis用来存储验证码
+redis_store = None # type: redis.StrictRedis
+
 def create_app(config_name):
 
     app = Flask(__name__)
@@ -38,11 +43,29 @@ def create_app(config_name):
     # 初始化
     db.init_app(app)
     # 创建redis对象(用来存储验证码,图片验证码和短信验证码)
-    redis_store =  redis.StrictRedis(host=name.REDIS_HOST,port=name.REDIS_PORT)
+    global redis_store
+    redis_store =  redis.StrictRedis(host=name.REDIS_HOST,port=name.REDIS_PORT,decode_responses=True)
+
     # 开启CSRF保护,避免视图函数受到攻击
     CSRFProtect(app)
     # 开启session
     Session(app)
+
+    @app.after_request
+    def after_request(response):
+        # 创建一个CSRF_Token
+        csrf_token =  generate_csrf()
+        # 往浏览器客户端写一个CSRF_token
+        response.set_cookie('csrf_token',csrf_token)
+        return response
+
+
+    # 注册自定义过滤器
+    from info.utils.common import do_class_index
+    # 添加一个模板过滤器
+    # 第一个参数表示函数的名字
+    # 第二个参数表示过滤器的名字
+    app.add_template_filter(do_class_index,'indexClass')
 
     # 首页
     from info.index import index_blue
@@ -51,6 +74,10 @@ def create_app(config_name):
     # 登陆注册
     from info.passport import passport_blue
     app.register_blueprint(passport_blue)
+
+    # 新闻详情
+    from info.news import news_blue
+    app.register_blueprint(news_blue)
 
     return app
 
