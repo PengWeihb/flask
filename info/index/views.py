@@ -30,7 +30,7 @@ def news_list():
     #     paginate = News.query.order_by(News.create_time.desc()).paginate(page,per_page,False)
     # else:
     #     paginate = News.query.filter(News.category_id == cid).order_by(News.create_time.desc()).paginate(page, per_page, False)
-    filter = []
+    filter = [News.status == 0]
     if cid != 1:
        filter.append(News.category_id == cid)
 

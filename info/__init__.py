@@ -2,6 +2,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask
+from flask import g
+from flask import render_template
 
 from config import Config,DevelopementConfig,ProdutionConfig,config_map
 
@@ -60,6 +62,18 @@ def create_app(config_name):
         return response
 
 
+    from info.utils.common import user_login_data
+    @app.errorhandler(404)
+    @user_login_data
+    def error_404_handler(error):
+        user = g.user
+
+        data = {
+            "user_info": user.to_dict() if user else None,
+
+        }
+        return render_template('news/404.html', data=data)
+
     # 注册自定义过滤器
     from info.utils.common import do_class_index
     # 添加一个模板过滤器
@@ -78,6 +92,14 @@ def create_app(config_name):
     # 新闻详情
     from info.news import news_blue
     app.register_blueprint(news_blue)
+
+    # 个人中心
+    from info.user import profile_blue
+    app.register_blueprint(profile_blue)
+
+    # 个人中心
+    from info.admin import admin_blue
+    app.register_blueprint(admin_blue)
 
     return app
 

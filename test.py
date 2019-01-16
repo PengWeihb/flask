@@ -1,23 +1,11 @@
-# import functools
+# from flask_sqlalchemy import SQLAlchemy
 #
 #
-# def user_login_data(f):
-#     @functools.wraps(f)
-#     def wrapper(*args,**kwargs):
-#
-#         return f(*args,**kwargs)
-#     return wrapper
-#
-# @user_login_data
-# def num1():
-#     print('aaa')
-#
-# @user_login_data
-# def num2():
-#     print('bbb')
+# db = SQLAlchemy
 #
 #
-#
-# if __name__ == '__main__':
-#     print(num1.__name__)
-#     print(num2.__name__)
+# class User(db.Model):
+#     mobile = db.Column(db.Integer)
+#     pwd = db.Column(db.String(128))
+#     image_url = db.Column(db.String(128))
+#     user_name = db.Column(db.String(128))
